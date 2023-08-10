@@ -1,4 +1,5 @@
 # from rest_framework import generics
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -87,7 +88,7 @@ book_model = BookModel.objects.all()
 #     def get(self, request):
 #         book = BookModel.objects.all()
 
-class BookListApiView(APIView):
+class BookApiView(APIView):
     def get(self, request):
         book = BookModel.objects.all()
         serializers_book = BookSerializers(book, many=True).data
@@ -99,8 +100,56 @@ class BookListApiView(APIView):
         return Response(data)
 
 
-class BookDetailAPIView(APIView):
-    def post(self, request, pk):
-        book = BookModel.objects.get(id=pk)
+class BookCreateAPIView(APIView):
+    def post(self, request):
+        # book = BookModel.objects.get(id=pk)
+        data = request.data
+        serializers = BookSerializers(data=data)
+        if serializers.is_valid():
+            serializers.save()
+            data = {
+                'status': "Books saved",
+                'serializer': data
+            }
 
-        serializers = BookSerializers(book).data
+            return Response(data)
+
+
+class BookUpdateView(APIView):
+
+    def get(self, request, pk):
+        try:
+            book = BookModel.objects.get(id=pk)
+            serializer_data = BookSerializers(book).data
+
+            data = {
+                'status': "Updated",
+                'serializer': serializer_data
+            }
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception:
+            data = {
+                'status': 'False',
+                'message': 'Bad Request',
+            }
+            return Response(data, status=status.HTTP_404_NOT_FOUND)
+
+
+class BookListAPIView(APIView):
+
+    def get(self, request, pk):
+
+        try:
+            book = BookModel.objects.get(id=pk)
+            serializer = BookSerializers(book).data
+            data = {
+                'status': status.HTTP_200_OK,
+                'serializer': serializer
+            }
+            return Response(data)
+        except Exception:
+            data = {
+                'status': status.HTTP_400_BAD_REQUEST,
+                'message': 'Xatolik mabjud'
+            }
+            return Response(data)
