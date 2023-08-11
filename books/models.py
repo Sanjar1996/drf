@@ -7,7 +7,7 @@ class BookModel(models.Model):
     subtitle = models.CharField(max_length=255)
     text = models.TextField(blank=True)
     author = models.CharField(max_length=255)
-    isbn = models.CharField(max_length=13)
+    isbn = models.CharField(max_length=13, unique=True )
     price = models.DecimalField(max_digits=20, decimal_places=2)
 
     def __str__(self) -> str:

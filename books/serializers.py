@@ -15,3 +15,7 @@ class BookSerializers(serializers.ModelSerializer):
             'isbn',
             'price'
         )
+
+    def validate(self, data):
+        print(data)
+        return data
