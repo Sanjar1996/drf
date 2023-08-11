@@ -101,16 +101,14 @@ class BookApiView(APIView):
 
 class BookCreateAPIView(APIView):
     def post(self, request):
-        # book = BookModel.objects.get(id=pk)
         data = request.data
         serializers = BookSerializers(data=data)
         if serializers.is_valid():
             serializers.save()
             data = {
-                'status': "Books saved",
+                'status': status.HTTP_201_CREATED,
                 'serializer': data
             }
-
             return Response(data)
 
 

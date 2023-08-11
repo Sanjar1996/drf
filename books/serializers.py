@@ -1,4 +1,5 @@
-from rest_framework import serializers
+from rest_framework import serializers, status
+from rest_framework.exceptions import ValidationError
 
 from .models import BookModel
 
@@ -17,5 +18,21 @@ class BookSerializers(serializers.ModelSerializer):
         )
 
     def validate(self, data):
-        print(data)
+        title = data.get('title', None)
+        author = data.get('author', None)
+        if not title.isalpha():
+            raise ValidationError(
+                {
+                    'status': status.HTTP_400_BAD_REQUEST,
+                    'messseage': 'Xatolik mavjud'
+                }
+            )
+        if BookModel.objects.filter(title=title, author=author):
+            raise ValidationError(
+                {
+                    'status': False,
+                    'message': "BU oldin kiritilgan"
+                }
+            )
+
         return data
